@@ -1,0 +1,80 @@
+SQL QURIES FOR THE PRICE- STRATEGY-OPTIMIZATION
+
+1. Basic Overview of the Dataset
+2. Total Revenue and Units Sold for Each Product
+3. Revenue by Product Category
+4.Top 5 Best-Selling Products
+5. Revenue by Region
+6. Average Price of Products by Category
+7. Finding the Optimal Price
+8. Revenue Trends Over Time
+9. Product Performance by Payment Method
+10. Products with High Revenue but Low Units Sold
+
+
+1. Basic overview of dataset
+
+select * from sales'
+
+2. Total Revenue and unit sold for each product
+
+select sum(revenue) as total_revenue , sum(unit_sold) as total_unit_sold 
+from sales
+group by product
+order by total_revenue desc;
+
+3. Revenue by Product Category
+
+select sum(revenue) as Revenue_by_Category
+from sales
+group by category
+order by Revenue_by_Category desc;
+
+4.Top 5 Best-Selling Products
+
+select Product , dense_rank(order by revenue_by_products) as rankings_by_product_sales
+from (select Product , sum(revenue) as revenue_by_products from sales group by products)
+where ranking_by_product_sales <=5 ;
+
+5. Revenue by Region
+
+select region , sum(revenue) as revenue_by_region 
+from sales 
+group by region 
+order by revenue_by_region desc;
+
+6. Average Price of Products by Category
+
+select category , 
+avg(revenue) over (partition by category ) as  avg_by_category
+from sales
+order by revenue desc;
+
+7. Finding the Optimal Price
+
+select unit_price , sum(revenue) as total_revenue
+from sales
+group by unit_price
+order by total_revenue desc
+limit 1;
+
+8. Revenue Trends Over Time
+
+select date , sum(revenue) over(partitiob by date order by date) as revenue_by_date 
+from sales;
+
+
+9. Product Performance by Payment Method
+
+select  payment_method,sum(revenue) as total_revenue,  sum(unit_sold) as total_unit_sold 
+from sales
+group by payment_method
+order by total_revenue desc;
+
+10. Products with High Revenue but Low Units Sold
+select product , sum(unit_sold) as total_unit_sold , sum(revenue) as total_revenue 
+from sales group by product 
+having total_unit_sold < 5
+order by total_revenue desc) 
+
+
